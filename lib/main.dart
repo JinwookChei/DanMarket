@@ -59,16 +59,31 @@ class CustomAppBar extends StatelessWidget {
               const Text(
                 'My Custom AppBar',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const Spacer(), // 남은 공간을 차지하도록 Spacer 위젯을 사용합니다.
               IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  // 알림 아이콘을 클릭했을 때의 동작을 정의합니다.
+                  // 기능 아직 없음
+                },
+              ),
+              IconButton(
                 icon: const Icon(Icons.notifications),
                 onPressed: () {
                   // 알림 아이콘을 클릭했을 때의 동작을 정의합니다.
+                  // 기능 아직 없음
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.account_circle),
+                onPressed: () {
+                  // 알림 아이콘을 클릭했을 때의 동작을 정의합니다.
+                  // 기능 아직 없음
                 },
               ),
             ],
