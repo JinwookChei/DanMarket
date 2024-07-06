@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
 void main() => runApp(const MyApp());
 
@@ -26,13 +27,64 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.0),
+    return Scaffold(
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(100.0),
         child: CustomAppBar(),
       ),
-      body: Center(
-        child: Text('Hello, World!'),
+      backgroundColor: Colors.black,
+      body: ImageSlideshow(
+        /// Width of the [ImageSlideshow].
+        width: double.infinity,
+
+        /// Height of the [ImageSlideshow].
+        height: 400,
+
+        /// The page to show when first creating the [ImageSlideshow].
+        initialPage: 0,
+
+        indicatorRadius: 5.0,
+
+        /// The color to paint the indicator.
+        indicatorColor: Colors.blue,
+
+        /// The color to paint behind th indicator.
+        indicatorBackgroundColor: Colors.white,
+
+        /// Called whenever the page in the center of the viewport changes.
+        //onPageChanged: (value) {
+        //print('Page changed: $value');
+        //},
+
+        /// Auto scroll interval.
+        /// Do not auto scroll with null or 0.
+        autoPlayInterval: 10000,
+
+        /// Loops back to first slide.
+        isLoop: true,
+
+        /// The widgets to display in the [ImageSlideshow].
+        /// Add the sample image file into the images folder
+        children: [
+          Image.asset(
+            'assets/BattlePost01.jpg',
+            //fit: BoxFit.none,
+            width: 50,
+            height: 50,
+          ),
+          Image.asset(
+            'assets/BattlePost02.png',
+            //fit: BoxFit.none,
+            width: 50,
+            height: 50,
+          ),
+          Image.asset(
+            'assets/BattlePost03.jpg',
+            //fit: BoxFit.none,
+            width: 50,
+            height: 50,
+          ),
+        ],
       ),
     );
   }
