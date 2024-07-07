@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+//import 'package:flutter/widgets.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
 void main() => runApp(const MyApp());
@@ -37,8 +37,12 @@ class MainPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            ImageSlideView(),
             MainPageContent(
-              title: 'First Content',
+              title: 'Second Contents',
+            ),
+            MainPageContent(
+              title: 'Third Contents',
             ),
           ],
         ),
@@ -107,58 +111,80 @@ class ImageSlideView extends StatelessWidget {
   const ImageSlideView({super.key});
   @override
   Widget build(BuildContext context) {
-    return ImageSlideshow(
-      /// Width of the [ImageSlideshow].
-      width: double.infinity,
+    return Container(
+      height: 450, // 각 컨테이너의 높이를 고정하거나 적절히 조절할 수 있습니다.
+      color: Colors.white,
+      child: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              'hello',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          Container(
+            color: Colors.black,
+            child: ImageSlideshow(
+              /// Width of the [ImageSlideshow].
+              width: double.infinity,
 
-      /// Height of the [ImageSlideshow].
-      height: 400,
+              /// Height of the [ImageSlideshow].
+              height: 400,
 
-      /// The page to show when first creating the [ImageSlideshow].
-      initialPage: 0,
+              /// The page to show when first creating the [ImageSlideshow].
+              initialPage: 0,
 
-      indicatorRadius: 5.0,
+              indicatorRadius: 5.0,
 
-      /// The color to paint the indicator.
-      indicatorColor: Colors.blue,
+              /// The color to paint the indicator.
+              indicatorColor: Colors.blue,
 
-      /// The color to paint behind th indicator.
-      indicatorBackgroundColor: Colors.white,
+              /// The color to paint behind th indicator.
+              indicatorBackgroundColor: Colors.white,
 
-      /// Called whenever the page in the center of the viewport changes.
-      //onPageChanged: (value) {
-      //print('Page changed: $value');
-      //},
+              /// Called whenever the page in the center of the viewport changes.
+              //onPageChanged: (value) {
+              //print('Page changed: $value');
+              //},
 
-      /// Auto scroll interval.
-      /// Do not auto scroll with null or 0.
-      autoPlayInterval: 10000,
+              /// Auto scroll interval.
+              /// Do not auto scroll with null or 0.
+              autoPlayInterval: 10000,
 
-      /// Loops back to first slide.
-      isLoop: true,
+              /// Loops back to first slide.
+              isLoop: true,
 
-      /// The widgets to display in the [ImageSlideshow].
-      /// Add the sample image file into the images folder
-      children: [
-        Image.asset(
-          'assets/BattlePost01.jpg',
-          //fit: BoxFit.none,
-          width: 50,
-          height: 50,
-        ),
-        Image.asset(
-          'assets/BattlePost02.png',
-          //fit: BoxFit.none,
-          width: 50,
-          height: 50,
-        ),
-        Image.asset(
-          'assets/BattlePost03.jpg',
-          //fit: BoxFit.none,
-          width: 50,
-          height: 50,
-        ),
-      ],
+              /// The widgets to display in the [ImageSlideshow].
+              /// Add the sample image file into the images folder
+              children: [
+                Image.asset(
+                  'assets/BattlePost01.jpg',
+                  //fit: BoxFit.none,
+                  width: 50,
+                  height: 50,
+                ),
+                Image.asset(
+                  'assets/BattlePost02.png',
+                  //fit: BoxFit.none,
+                  width: 50,
+                  height: 50,
+                ),
+                Image.asset(
+                  'assets/BattlePost03.jpg',
+                  //fit: BoxFit.none,
+                  width: 50,
+                  height: 50,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
