@@ -1,7 +1,6 @@
 # danmarket
 
 DanMarket는 댄서들을 위한 커뮤니티 클라이언트 앱입니다. 이 앱은 댄서들 사이의 소통과 정보 교환을 목적으로 하며, 행사, 레슨 구인/구직, 공연 섭외 등 다양한 게시판을 제공합니다.
-위 앱은 Flutter로 제작 되었습니다.
 
 ## 주요 기능
 
@@ -12,19 +11,30 @@ DanMarket는 댄서들을 위한 커뮤니티 클라이언트 앱입니다. 이 
 ## 기술 스택
 
 - **프레임워크**: Flutter
-- **상태 관리**: Provider
 - **네트워킹**: HTTP
-- **이미지 처리**: flutter_image_slideshow, image_picker
-## Getting Started
 
+# 의존성
 
-This project is a starting point for a Flutter application.
+## flutter
+- **설명**: Flutter SDK의 핵심.
+- **역할**: Flutter 애플리케이션을 개발하는 데 필요한 도구와 라이브러리를 제공합니다.
 
-A few resources to get you started if this is your first Flutter project:
+## flutter_image_slideshow: any
+- **설명**: 이미지 슬라이드쇼를 만드는 Flutter 패키지.
+- **역할**: 앱 내에서 이미지 캐러셀 및 슬라이드쇼를 생성할 수 있게 합니다.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## http: ^1.2.1
+- **설명**: HTTP 요청을 수행하는 패키지.
+- **역할**: API에서 데이터를 가져오는 등의 네트워크 요청을 용이하게 합니다.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## provider: ^6.1.2
+- **설명**: 상태 관리를 위한 패키지.
+- **역할**: provider 패턴을 사용하여 앱 전체에서 상태를 효율적으로 관리할 수 있게 합니다.
+
+## convert: ^3.1.1
+- **설명**: 데이터 인코딩 및 디코딩을 위한 패키지.
+- **역할**: JSON과 같은 형식 간의 데이터 변환을 위한 유틸리티를 제공합니다.
+
+## image_picker: ^1.1.2
+- **설명**: 갤러리 또는 카메라에서 이미지를 선택하는 패키지.
+- **역할**: 기기 카메라로 찍은 사진이나 갤러리에 저장된 이미지를 앱에서 접근하고 사용할 수 있게 합니다.
