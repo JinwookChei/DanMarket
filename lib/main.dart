@@ -1,17 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:danmarket/models/post.dart';
 import 'package:danmarket/providers/post_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
 import 'dart:ui' as ui;
-
-import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
 // void main() => runApp(const MyApp());
@@ -414,7 +407,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PostPage(title: '레슨 대강/구인 게시판'),
+                      builder: (context) =>
+                          const PostPage(title: '레슨 대강/구인 게시판'),
                     ),
                   );
                 } else {
