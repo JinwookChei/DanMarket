@@ -17,7 +17,7 @@ class Post {
     );
   }
 
-  dynamic toJson() => {
+  Map<String, dynamic> toJson() => {
         'postname': postname,
         'contents': contents,
         'mainphoto': mainphoto,
