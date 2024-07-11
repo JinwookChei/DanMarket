@@ -8,13 +8,20 @@ import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import 'dart:ffi';
 import 'dart:ui' as ui;
 
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
-void main() => runApp(const MyApp());
+// void main() => runApp(const MyApp());
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => PostProvider()..fetchPost(), // 앱 시작 시 게시물 가져오기
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -45,16 +52,19 @@ class MainPage extends StatelessWidget {
         preferredSize: ui.Size.fromHeight(100.0),
         child: CustomAppBar(),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
             ImageSlideView(),
             MainPageContent(
-              title: 'Second Contents',
+              title: '레슨 대강/구인 게시판',
+            ),
+            Divider(
+              thickness: 1,
             ),
             MainPageContent(
-              title: 'Third Contents',
+              title: '공연 섭외 게시판',
             ),
           ],
         ),
@@ -81,14 +91,14 @@ class CustomAppBar extends StatelessWidget {
                 width: 120.0, // 로고 이미지의 너비를 조정합니다.
               ),
               const SizedBox(width: 10.0),
-              const Text(
-                'My Custom AppBar',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              // const Text(
+              //   ' AppBar',
+              //   style: TextStyle(
+              //     color: Colors.black,
+              //     fontSize: 20.0,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
               const Spacer(), // 남은 공간을 차지하도록 Spacer 위젯을 사용합니다.
               IconButton(
                 icon: const Icon(Icons.search),
@@ -131,7 +141,7 @@ class ImageSlideView extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              'hello',
+              '주요행사정보',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -209,7 +219,7 @@ class MainPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 300, // 각 컨테이너의 높이를 고정하거나 적절히 조절할 수 있습니다.
-      color: Colors.blue,
+      color: Colors.white,
       child: Column(
         children: [
           GestureDetector(
@@ -218,8 +228,7 @@ class MainPageContent extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        //const NextPage(title: 'Flutter Demo Home Page')),
-                        PostListScreen()),
+                        const PostPage(title: '레슨 대강/구인 게시판')),
               );
             },
             child: Padding(
@@ -229,7 +238,7 @@ class MainPageContent extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -238,7 +247,7 @@ class MainPageContent extends StatelessWidget {
             child: Center(
               child: Text(
                 'First Part Content',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.black),
               ),
             ),
           ),
@@ -248,40 +257,67 @@ class MainPageContent extends StatelessWidget {
   }
 }
 
-class PostListScreen extends StatelessWidget {
-  const PostListScreen({super.key});
+class PostPage extends StatefulWidget {
+  const PostPage({Key? key, required this.title}) : super(key: key);
+  final String title;
 
   @override
+  _PostPageState createState() => _PostPageState();
+}
+
+class _PostPageState extends State<PostPage> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('게시판'),
-      ),
-      body: Consumer<PostProvider>(
-        builder: (context, postProvider, child) {
-          return ListView.builder(
-            itemCount: postProvider.posts.length,
-            itemBuilder: (context, index) {
-              final post = postProvider.posts[index];
-              return ListTile(
-                leading: post.imagePath.isNotEmpty
-                    ? Image.file(File(post.imagePath), width: 50, height: 50)
-                    : null,
-                title: Text(post.title),
-                subtitle: Text(post.content),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddPostScreen()),
-          );
-        },
-        child: Icon(Icons.add),
+    return ChangeNotifierProvider(
+      create: (context) => PostProvider(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: Consumer<PostProvider>(
+          builder: (context, postProvider, child) {
+            return ListView.builder(
+              itemCount: postProvider.posts.length,
+              itemBuilder: (context, index) {
+                final post = postProvider.posts[index];
+                return Column(
+                  children: [
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 50.0, horizontal: 16.0),
+                      leading: Container(
+                        width: 150,
+                        height: 150,
+                        color: Colors.grey,
+                        child: post.mainphoto.isNotEmpty &&
+                                Uri.parse(post.mainphoto).isAbsolute
+                            ? Image.network(
+                                post.mainphoto,
+                                fit: BoxFit.cover,
+                              )
+                            : const Icon(Icons.image_not_supported,
+                                size: 80, color: Colors.white),
+                      ),
+                      title: Text(post.postname),
+                      subtitle: Text(post.mainphoto),
+                    ),
+                    Divider(),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddPostScreen()),
+            );
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -308,9 +344,43 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
   }
 
+  Future<void> _uploadPost(Post newPost) async {
+    Uri url = Uri.parse('http://127.0.0.1:8000/blog/new_post/'); // 예시 URL
+
+    try {
+      final response = await http.post(
+        url,
+        body: {
+          'postname': newPost.postname,
+          'contents': newPost.contents,
+          'mainphoto': newPost.mainphoto, // 필요한 경우 이미지 경로도 전송할 수 있습니다
+        },
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/x-www-form-urlencoded',
+          // 필요한 경우 인증 토큰 등의 추가 헤더를 설정하세요
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // 성공적으로 게시물이 추가되었을 때의 처리
+        print('게시물이 성공적으로 추가되었습니다.');
+        Navigator.pop(context); // 성공 시 화면을 닫습니다
+      } else {
+        // 서버에서 오류 응답을 받았을 때의 처리
+        print('게시물 추가 실패: ${response.reasonPhrase}');
+        // 오류 메시지를 사용자에게 표시하거나 필요한 처리를 수행합니다
+      }
+    } catch (e) {
+      // 네트워크 오류 등 예외가 발생했을 때의 처리
+      print('게시물 추가 중 오류 발생: $e');
+      // 오류 메시지를 사용자에게 표시하거나 필요한 처리를 수행합니다
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('새 게시물 추가'),
       ),
@@ -345,7 +415,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     postname: _titleController.text,
                     contents: _contentController.text,
                     mainphoto: _imagePath!,
-                    id: 9999,
                   );
                   Provider.of<PostProvider>(context, listen: false)
                       .addPost(newPost);
@@ -361,61 +430,51 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 }
 
-class NextPage extends StatefulWidget {
-  const NextPage({super.key, required this.title});
-  final String title;
+class PostFormWidget extends StatefulWidget {
+  final void Function(String title, String content) onSubmit;
+
+  const PostFormWidget({Key? key, required this.onSubmit}) : super(key: key);
 
   @override
-  _NextPageState createState() => _NextPageState();
+  _PostFormWidgetState createState() => _PostFormWidgetState();
 }
 
-class _NextPageState extends State<NextPage> {
-  String _message = "EMPTY";
-
-  void sendrequest() async {
-    // This example uses the Google Books API to search for books about http.
-    // https://developers.google.com/books/docs/overview
-    var url = Uri.http('127.0.0.1:8000', '/post');
-
-    // Await the http get response, then decode the json-formatted response.
-    var response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      var jsonResponse = convert.jsonDecode(response.body) as List<dynamic>;
-      _message = jsonResponse[1]['postname'];
-    } else {
-      //print('Request failed with status: ${response.statusCode}.');
-    }
-    setState(() {});
-  }
+class _PostFormWidgetState extends State<PostFormWidget> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'The messsage is : ',
-            ),
-            Text(
-              _message,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return Column(
+      children: [
+        TextFormField(
+          controller: _titleController,
+          decoration: const InputDecoration(
+            labelText: '제목',
+            border: OutlineInputBorder(),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: sendrequest,
-        tooltip: 'send request',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        const SizedBox(height: 16.0),
+        TextFormField(
+          controller: _contentController,
+          maxLines: 5,
+          decoration: const InputDecoration(
+            labelText: '내용',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 16.0),
+        ElevatedButton(
+          onPressed: () {
+            String title = _titleController.text.trim();
+            String content = _contentController.text.trim();
+            widget.onSubmit(title, content);
+            _titleController.clear();
+            _contentController.clear();
+          },
+          child: const Text('게시물 작성'),
+        ),
+      ],
     );
   }
 }
