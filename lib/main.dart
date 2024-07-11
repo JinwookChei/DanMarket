@@ -1,6 +1,18 @@
+import 'dart:io';
+
+import 'package:danmarket/models/post.dart';
+import 'package:danmarket/providers/post_provider.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
+import 'dart:ffi';
+import 'dart:ui' as ui;
+
+import 'dart:convert' as convert;
+import 'package:http/http.dart' as http;
 
 void main() => runApp(const MyApp());
 
@@ -30,7 +42,7 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100.0),
+        preferredSize: ui.Size.fromHeight(100.0),
         child: CustomAppBar(),
       ),
       backgroundColor: Colors.black,
@@ -200,14 +212,25 @@ class MainPageContent extends StatelessWidget {
       color: Colors.blue,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        //const NextPage(title: 'Flutter Demo Home Page')),
+                        PostListScreen()),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -221,6 +244,178 @@ class MainPageContent extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class PostListScreen extends StatelessWidget {
+  const PostListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('게시판'),
+      ),
+      body: Consumer<PostProvider>(
+        builder: (context, postProvider, child) {
+          return ListView.builder(
+            itemCount: postProvider.posts.length,
+            itemBuilder: (context, index) {
+              final post = postProvider.posts[index];
+              return ListTile(
+                leading: post.imagePath.isNotEmpty
+                    ? Image.file(File(post.imagePath), width: 50, height: 50)
+                    : null,
+                title: Text(post.title),
+                subtitle: Text(post.content),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddPostScreen()),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class AddPostScreen extends StatefulWidget {
+  @override
+  _AddPostScreenState createState() => _AddPostScreenState();
+}
+
+class _AddPostScreenState extends State<AddPostScreen> {
+  final _titleController = TextEditingController();
+  final _contentController = TextEditingController();
+  String? _imagePath;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imagePath = pickedFile.path;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('새 게시물 추가'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _titleController,
+              decoration: InputDecoration(labelText: '제목'),
+            ),
+            TextField(
+              controller: _contentController,
+              decoration: InputDecoration(labelText: '내용'),
+            ),
+            SizedBox(height: 10),
+            _imagePath != null
+                ? Image.file(File(_imagePath!), height: 200)
+                : Container(),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _pickImage,
+              child: Text('이미지 선택'),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                if (_titleController.text.isNotEmpty &&
+                    _contentController.text.isNotEmpty &&
+                    _imagePath != null) {
+                  final newPost = Post(
+                    postname: _titleController.text,
+                    contents: _contentController.text,
+                    mainphoto: _imagePath!,
+                    id: 9999,
+                  );
+                  Provider.of<PostProvider>(context, listen: false)
+                      .addPost(newPost);
+                  Navigator.pop(context);
+                }
+              },
+              child: Text('게시물 추가'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NextPage extends StatefulWidget {
+  const NextPage({super.key, required this.title});
+  final String title;
+
+  @override
+  _NextPageState createState() => _NextPageState();
+}
+
+class _NextPageState extends State<NextPage> {
+  String _message = "EMPTY";
+
+  void sendrequest() async {
+    // This example uses the Google Books API to search for books about http.
+    // https://developers.google.com/books/docs/overview
+    var url = Uri.http('127.0.0.1:8000', '/post');
+
+    // Await the http get response, then decode the json-formatted response.
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var jsonResponse = convert.jsonDecode(response.body) as List<dynamic>;
+      _message = jsonResponse[1]['postname'];
+    } else {
+      //print('Request failed with status: ${response.statusCode}.');
+    }
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'The messsage is : ',
+            ),
+            Text(
+              _message,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: sendrequest,
+        tooltip: 'send request',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
