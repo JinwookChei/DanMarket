@@ -1,6 +1,9 @@
-# danmarket
+## danmarket
 
 DanMarket는 댄서들을 위한 커뮤니티 클라이언트 앱입니다. 이 앱은 댄서들 사이의 소통과 정보 교환을 목적으로 하며, 행사, 레슨 구인/구직, 공연 섭외 등 다양한 게시판을 제공합니다.
+
+## DanMarket-Server
+https://github.com/JinwookChei/DanMarket_Server.git
 
 ## 주요 기능
 
